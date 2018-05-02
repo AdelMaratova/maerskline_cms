@@ -1,0 +1,132 @@
+﻿@model List<ContainerManagementSystem.Models.City>
+@using System.Collections.Generic
+
+@{
+    string country_id = ViewData["country_id"].ToString();
+}
+
+<script>
+    $(document).ready(function () {
+        $('#btnAddNewCity').on('click', function () {
+            AddNewRow();
+            });
+
+        $('#btnSave').on('click', function () {
+            SaveCities();
+        });
+    });
+
+    function SaveCities()
+    {
+        debugger;
+
+        var cities = [];
+        var city_single = {};
+
+        $('#CitiesTable tr').each(function () {
+
+            debugger;
+
+            if ($($(this).find('td')[0]).html() != undefined && $($(this).find('td')[0]).html() != '')
+            {
+                city_single = {};
+                city_single.CityId = $($(this).find('td')[0]).html();
+                city_single.CityName = $('#CityName_' + $($(this).find('td')[0]).html()).val();
+                city_single.CountryId = '@country_id';
+
+                cities.push(city_single);
+            }
+        })
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            url: '/City/CitiesCreateUpdate',
+            type:'POST',
+            dataType: 'json',
+            data: JSON.stringify({ cities: cities }),
+            success: function(data)
+            {
+                GenerateMessage('Save Successfully');
+
+                RefreshPage();
+            }
+        });
+    }
+
+    function RefreshPage()
+    {
+        $.ajax({
+            url: '/City/CreateUpdateCities',
+            data: { country_id: '@country_id' },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function AddNewRow()
+    {
+        $.ajax({
+            url: '/User/GetNewGuid',
+            success: function(data)
+            {
+                var table_content = $('#CitiesTable > tbody').html();
+                var new_row = '';
+
+
+                new_row += '<tr>';
+                new_row += '<td class="" style="display:none;">' + data +'</td>';
+                new_row += '<td class="col-lg-1"></td>';
+                new_row += '<td class="col-lg-3"><input type="text" id="CityName_' + data + '" value=""></td>';
+                new_row += '</tr>';
+
+                table_content = new_row + table_content;
+
+                $('#CitiesTable > tbody').html(table_content);
+            }
+        });
+    }
+</script>
+
+<div id="CityListPage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12 content-right">
+            <input type="button" id="btnAddNewCity" value="Add New" />
+            <input type="button" id="btnSave" value="Save" />
+        </div>
+    </div>
+    <div class="row">
+        <table class="responstable" id="CitiesTable">
+            <thead>
+                <tr>
+                    <th class="" style="display:none;">
+                        <b>CityId</b>
+                    </th>
+                    <th class="col-lg-1">
+                        <b>No</b>
+                    </th>
+                    <th class="col-lg-3">
+                        <b>City Name</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td class="" style="display:none;">@Model[i].CityId</td>
+                            <td class="col-lg-1">
+                                @(i + 1)
+                            </td>
+                            <td class="col-lg-3">
+                                <input type="text" id="CityName_@Model[i].CityId" value="@Model[i].CityName" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

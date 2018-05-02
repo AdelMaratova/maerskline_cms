@@ -1,0 +1,320 @@
+﻿@using ContainerManagementSystem.Models.System
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CMS</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script src="../Scripts/GeneralScripts.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/Content/Custom_Styles/styles_custom_1.css">
+    <link rel="stylesheet" href="~/Content/Custom_Styles/styles_custom_input.css">
+    <link rel="stylesheet" href="~/Content/Custom_Styles/styles_custom_table.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        body, h1, h2, h3, h4, h5, h6 {
+            font-family: "Raleway", sans-serif;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function ()
+        {
+            $('#lnkProfile').on('click', function () { ClearErrorMessages(); GoToProfile() });
+            $('#lnkHome').on('click', function () { ClearErrorMessages(); GoToHome() });
+            $('#lnkCountries').on('click', function () { ClearErrorMessages(); GoToCountries() });
+            $('#lnkShipments').on('click', function () { ClearErrorMessages(); GoToShipments() });
+            $('#lnkShipmentHistory').on('click', function () { ClearErrorMessages(); GoToShipmentHistory() });
+            $('#lnkShipmentTracking').on('click', function () { ClearErrorMessages(); GoToShipmentTracking() });
+            $('#lnkShipmentRoutes').on('click', function () { ClearErrorMessages(); GoToShipmentRoutes() });
+            $('#lnkAgents').on('click', function () { ClearErrorMessages(); GoToAgents() });
+            $('#lnkShipmentMethod').on('click', function () { ClearErrorMessages(); GoToShipmentMethods() });
+            $('#lnkCustomers').on('click', function () { ClearErrorMessages(); GoToCustomers() });
+            $('#lnkRequestShipment').on('click', function () { ClearErrorMessages(); GoToShipmentRequest() });
+            $('#lnkLogout').on('click', function () { ClearErrorMessages(); Logout() });
+
+            UpdateUserDisplayInfo();
+        });
+
+        function GoToShipmentRequest()
+        {
+            UpdateCurrentPageDisplayInfo('Shipment Request');
+
+            $.ajax({
+                url: '/Shipment/ShipmentRequest',
+                data: {shipment_id: '@Guid.Empty'},
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToCustomers()
+        {
+            UpdateCurrentPageDisplayInfo('Customers');
+
+            $.ajax({
+                url: '/Customer/CustomerList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToShipmentMethods()
+        {
+            UpdateCurrentPageDisplayInfo('Shipment Methods');
+
+            $.ajax({
+                url: '/ShipmentMethod/ShipmentMethodList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToAgents()
+        {
+            UpdateCurrentPageDisplayInfo('Agents');
+
+            $.ajax({
+                url: '/User/AgentList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToShipmentRoutes()
+        {
+            UpdateCurrentPageDisplayInfo('Shipment Route');
+
+            $.ajax({
+                url: '/ShipmentRoute/ShipmentRouteList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function Logout()
+        {
+            $.ajax({
+                url: '/Login/LoginPage',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToShipmentTracking()
+        {
+            UpdateCurrentPageDisplayInfo('Shipment Tracking');
+
+            $.ajax({
+                url: '/ShipmentHistory/ViewShipmentTracking',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToShipmentHistory()
+        {
+            UpdateCurrentPageDisplayInfo('Shipment History');
+
+            $.ajax({
+                url: '/ShipmentHistory/ViewShipmentHistory',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToCountries()
+        {
+            UpdateCurrentPageDisplayInfo('Countries');
+
+            $.ajax({
+                url: '/Country/CountryList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToShipments()
+        {
+            UpdateCurrentPageDisplayInfo('Shipments');
+
+            $.ajax({
+                url: '/Shipment/ShipmentList',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToHome()
+        {
+            UpdateCurrentPageDisplayInfo('Home');
+
+            $.ajax({
+                url: '/Home/Index',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function GoToProfile()
+        {
+            UpdateCurrentPageDisplayInfo('My Profile');
+
+            $.ajax({
+                url: '/User/MyProfile',
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+
+        function Logout() {
+            PurgeSession();
+
+            window.location.href = '/Login/LoginPage';
+        }
+    </script>
+</head>
+<body class="cms-light-grey cms-content" style="max-width:1600px">
+
+    <!-- Sidebar/menu -->
+    <nav class="cms-sidebar cms-collapse cms-white cms-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+        <br>
+        <div class="cms-container">
+            <a href="#" onclick="cms_close()" class="cms-hide-large cms-right cms-jumbo cms-padding cms-hover-grey" title="close menu">
+                <i class="fa fa-remove"></i>
+            </a>
+            <img id="Global_ProfilePic" src="/Content/Images/maersk-logo.png" style="width:45%;" class="cms-round"><br><br>
+            <h4><b id="Global_UserName"></b></h4>
+            <h5><b id="Global_UserEmail"></b></h5>
+            <input type="hidden" id="Global_UserId" value="" />
+        </div>
+        <div class="cms-bar-block">
+            @{
+                if(MySession.CurrentSession != null)
+                {
+                    if(MySession.CurrentSession.UserId != Guid.Empty)
+                    {
+                        if(MySession.CurrentSession.UserType == ContainerManagementSystem.CommonEnum.UserType.Agent)
+                        {
+                            @*<a href="#" id="lnkHome" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Home</a>*@
+                            <a href="#" id="lnkProfile" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Profile</a>
+                            <a href="#" id="lnkCustomers" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Customers</a>
+                            <a href="#" id="lnkShipments" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipments</a>
+                            <a href="#" id="lnkShipmentHistory" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment History</a>
+                            <a href="#" id="lnkShipmentTracking" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Tracking</a>
+                            <a href="#" id="lnkLogout" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Logout</a>
+                        }
+                        else if(MySession.CurrentSession.UserType == ContainerManagementSystem.CommonEnum.UserType.Admin)
+                        {
+                            @*<a href="#" id="lnkHome" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Home</a>*@
+                            <a href="#" id="lnkProfile" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Profile</a>
+                            <a href="#" id="lnkAgents" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Agents</a>
+                            <a href="#" id="lnkCountries" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Countries</a>
+                            <a href="#" id="lnkShipmentRoutes" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Routes</a>
+                            <a href="#" id="lnkShipmentMethod" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Methods</a>
+                            <a href="#" id="lnkLogout" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Logout</a>
+                        }
+                        else if (MySession.CurrentSession.UserType == ContainerManagementSystem.CommonEnum.UserType.Customer)
+                        {
+                            <a href="#" id="lnkRequestShipment" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Request Shipment</a>
+                            <a href="#" id="lnkShipmentTracking" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Tracking</a>
+                            <a href="#" id="lnkLogout" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Go to Login</a>
+                        }
+                    }
+                    else
+                    {
+                        <a href="#" id="lnkShipmentTracking" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Tracking</a>
+                        <a href="#" id="lnkLogout" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Go to Login</a>
+                    }
+                }
+                else
+                {
+                    <a href="#" id="lnkShipmentTracking" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Shipment Tracking</a>
+                    <a href="#" id="lnkLogout" class="cms-bar-item cms-button cms-padding"><i class="fa fa-th-large fa-fw cms-margin-right"></i>Go to Login</a>
+                }
+            }
+        </div>
+    </nav>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="cms-overlay cms-hide-large cms-animate-opacity" onclick="cms_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+    <div class="cms-main" style="margin-left:300px">
+        <!-- Header -->
+        <header id="portfolio">
+            <a href="#"><img src="" style="width:65px;" class="cms-circle cms-right cms-margin cms-hide-large cms-hover-opacity"></a>
+            <span class="cms-button cms-hide-large cms-xxlarge cms-hover-text-grey" onclick="cms_open()"><i class="fa fa-bars"></i></span>
+            <div class="cms-container">
+                <h1><b>CMS</b></h1>
+                <div class="cms-section cms-bottombar cms-padding-16">
+                    <h3><b id="CurrentPage">Home</b></h3>
+                </div>
+            </div>
+        </header>
+    </div>
+    <!-- !PAGE CONTENT! -->
+
+    <div class="m-l-m m-r-m" style="margin-left:300px;" hidden="hidden" id="ErrorContainer">
+        <div class="col-lg-11" id="ErrorMessageDiv">
+
+        </div>
+        <div class="content-right col-lg-1">
+            <a href="#" onclick="ClearErrorMessages()">X</a>
+        </div>
+
+        <div class="col-lg-12"></div>
+    </div>
+
+    <div id="divBody" class="row cms-main" style="margin-left:300px">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+    <script>
+        // Script to open and close sidebar
+        function cms_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+
+        function cms_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

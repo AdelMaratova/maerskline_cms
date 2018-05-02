@@ -1,0 +1,104 @@
+﻿@using ContainerManagementSystem.CommonEnum
+@using ContainerManagementSystem.Models.System
+
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#btnLogin').on('click', function () {
+            LoginUser();
+        });
+
+        $('#lnkCreateUser').on('click', function () {
+            GoToRegisterUser();
+        });
+
+        $('#lnkShipmentTracking').on('click', function () {
+            GoToTracking();
+        });
+    });
+
+    function LoginUser() {
+        var userName = $('#userName').val();
+        var password = $('#password').val();
+
+        var login_user = {};
+
+        login_user.Email = userName;
+        login_user.Password = password;
+        login_user.FirstName = '';
+        login_user.LastName = '';
+        login_user.UserId = '@Guid.Empty';
+
+        $.ajax({
+            url: '/Login/LoginUser',
+            data: login_user,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                debugger;
+                if (data.returnResponse.StrReturnStatus == '@AjaxReturnStatus.Success')
+                {
+                    if(data.UserType == '@UserType.Customer.ToString()')
+                    {
+                        UpdateCurrentPageDisplayInfo('Shipment Request');
+                        window.location.href = '/Shipment/ShipmentRequest?shipment_id=' + '@Guid.Empty'
+                    }
+                    else
+                    {
+                        window.location.href = '/User/MyProfile';
+                    }
+                }
+                else
+                {
+                    alert('Invalid user credentials');
+                }
+            },
+            error: function (data) {
+
+            }
+        });
+
+        if(0 > 0) {
+            alert('Incorrect company credentials.');
+        }
+    }
+
+    function GoToTracking() {
+
+        window.location.href = '/ShipmentHistory/ViewShipmentTracking';
+    }
+
+    function GoToRegisterUser() {
+
+        window.location.href = '/Login/RegisterUser';
+    }
+</script>
+>
+<div class="container">
+    <div class="login">
+        <h1 class="login-heading1">
+            <strong>Container Management System</strong>
+        </h1>
+
+        <form method="post" style="margin-top: 20px;">
+            <input id="userName" type="text" name="user" placeholder="Email" required="required" class="input-txt" />
+            <input id="password" type="password" name="password" placeholder="Password" required="required" class="input-txt" />
+            <div class="login-footer">
+                <a style="display:none;" href="#" class="lnk" id="lnkCreateUser">
+                    Do not have an account.
+                </a>
+                <br />
+                <a href="#" class="lnk" id="lnkShipmentTracking">
+                    Shipment tracking.
+                </a>
+                <button id="btnLogin" type="button" class="btn btn--right">Login</button>
+
+            </div>
+        </form>
+    </div>
+</div>

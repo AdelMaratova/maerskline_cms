@@ -1,0 +1,25 @@
+﻿@model ContainerManagementSystem.Models.Country.Country
+@using ContainerManagementSystem.Models.System;
+
+
+
+<div id="MyProfilePage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="col-lg-4">
+                <label for="CountryName">Country Name </label>
+                <input id="CountryName" type="text" disabled="disabled" value="@Model.CountryName" />
+            </div>
+
+            <div class="row m-t-m">
+                <div class="col-lg-12 content-center">
+                    <input type="button" value="Edit" id="btnEdit" />
+                    <input type="button" value="Delete" id="btnDelete" />
+                    <input type="button" value="Save" id="btnSave" hidden="hidden" />
+                    <input type="button" value="Cancel" id="btnCancel" hidden="hidden" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

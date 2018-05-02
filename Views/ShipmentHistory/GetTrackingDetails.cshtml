@@ -1,0 +1,57 @@
+﻿@model List<ContainerManagementSystem.Models.Shipment.ShipmentViewModel>
+@using System.Collections.Generic
+
+<script>
+    $(document).ready(function () {
+
+    });
+</script>
+
+<div id="ShipmentTrackingDetailPage">
+    <table class="responstable" id="ShipmentsTable">
+        <thead>
+            <tr>
+                <th class="" style="display:none;">
+                    <b>ShipmentId</b>
+                </th>
+                <th class="col-lg-2">
+                    <b>Shipment No</b>
+                </th>
+                <th class="col-lg-2">
+                    <b>Sent From</b>
+                </th>
+                <th class="col-lg-2">
+                    <b>Sent To</b>
+                </th>
+                <th class="col-lg-2">
+                    <b>Status</b>
+                </th>
+                <th class="col-lg-2">
+                    <b>Date</b>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td class="" style="display:none;">ShipmentId</td>
+
+                        <td class="col-lg-2">@Model[i].ShipmentNo</td>
+
+                        <td class="col-lg-2">@(Model[i].SenderCountry + " | " + Model[i].SenderCity)</td>
+
+                        <td class="col-lg-2">@(Model[i].DestinationCountry + " | " + Model[i].DestinationCity)</td>
+
+                        <td class="col-lg-2">@Model[i].ShipmentStatus</td>
+
+                        <td class="col-lg-2">@Model[i].ShippingDate.ToString("dd MMM yyyy HH:MM")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+

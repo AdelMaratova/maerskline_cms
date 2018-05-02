@@ -1,0 +1,135 @@
+﻿@model ContainerManagementSystem.Models.User.User
+@using ContainerManagementSystem.Models.System;
+@using ContainerManagementSystem.CommonEnum;
+
+<script>
+    $(document).ready(function () {
+        $('#btnDelete').on('click', function () { DeleteUser() });
+
+        $('#btnCancel').on('click', function () { RefreshPage() });
+
+        $('#btnSave').on('click', function () { SaveUser() });
+
+        $('#btnBack').on('click', function () { BackTOAgentListing() });
+    });
+
+    function BackTOAgentListing()
+    {
+        $.ajax({
+            url: '/User/AgentList',
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function SaveUser()
+    {
+        var user = {};
+
+        user.UserId = '@Model.UserId';
+        user.FirstName = $('#Prof_FirstName').val();
+        user.LastName = $('#Prof_LastName').val();
+        user.Email = $('#Prof_Email').val();
+        user.Password = $('#Prof_Password').val();
+
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            dataType: 'json',
+            url: '/User/UserCreateUpdate',
+            data: JSON.stringify({ user: user }),
+            success: function (data) {
+                
+                if (data.StrReturnStatus == '@AjaxReturnStatus.Success') {
+                        GenerateMessage('Saved Successfully');
+                        GoToListing();
+                    }
+                    else {
+                        var messages = ''
+                        debugger;
+                        GenerateMessage('Error', data.ErrorMessages);
+
+                    }
+
+            },
+            error: function (data) { }
+        });
+    }
+
+    function RefreshPage()
+    {
+        $.ajax({
+            url: '/User/EditUser',
+            data: { user_id: '@Model.UserId' },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function DeleteUser()
+    {
+        var confirmation = confirm('Are you sure you want to delete profile? This action cannot be undone.');
+
+        if(confirmation)
+        {
+            $.ajax({
+                url: '/User/Deleteuser',
+                data: {user_id: '@Model.UserId'},
+                success: function (data) {
+                    GenerateMessage('Deleted Successfully');
+
+                    Logout();
+                }
+            });
+        }
+    }
+</script>
+    
+
+<div id="MyProfilePage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="col-lg-4">
+                <label for="Prof_FirstName">First Name </label>
+                <input id="Prof_FirstName" type="text" value="@Model.FirstName" />
+            </div>
+
+            <div class="col-lg-4">
+                <label for="Prof_LastName">Last Name </label>
+                <input id="Prof_LastName" type="text" value="@Model.LastName" />
+            </div>
+
+            <div class="col-lg-4">
+                <label for="Prof_Email">Email </label>
+                <input id="Prof_Email" type="text" value="@Model.Email" />
+            </div>
+
+            <div class="col-lg-12"></div>
+
+            <div class="col-lg-4">
+                <label for="Prof_Password">Password </label>
+                <input id="Prof_Password" type="password" value="@Model.Password" />
+            </div>
+
+            <div class="row m-t-m">
+                <div class="col-lg-12 content-center">
+                    <input type="button" value="Delete" id="btnDelete" />
+                    <input type="button" value="Save" id="btnSave" />
+                    <input type="button" value="Cancel" id="btnCancel" />
+                    @{
+                        if(Model.UserId != MySession.CurrentSession.UserId)
+                        {
+                            <input type="button" value="Back" id="btnBack" />
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

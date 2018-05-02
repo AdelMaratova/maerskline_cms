@@ -1,0 +1,82 @@
+﻿@model List<ContainerManagementSystem.Models.ShipmentRoute.ShipmentRouteViewModel>
+@using System.Collections.Generic
+
+<script>
+    $(document).ready(function () {
+        $('#btnAddNewShipmentRoute').on('click', function () {
+            GoToEditPage('@Guid.Empty');
+        });
+    });
+
+    function EditShipmentRoute(shipment_route_id)
+    {
+        GoToEditPage(shipment_route_id);
+    }
+
+    function GoToEditPage(shipment_route_id)
+    {
+        $.ajax({
+            url: '/ShipmentRoute/ShipmentRouteDetails',
+            data: { shipment_route_id: shipment_route_id },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+</script>
+
+<div id="ShipmentRouteListPage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12 content-right">
+            <input type="button" id="btnAddNewShipmentRoute" value="Add New" />
+        </div>
+    </div>
+    <div class="row">
+        <table class="responstable" id="ShipmentRouteTable">
+            <thead>
+                <tr>
+                    <th class="" style="display:none;">
+                        <b>ShipmentRouteId</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Shipment Route Name</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Sender</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Destination</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Total stop points</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Action</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td class="col-lg-2" style="display:none;">@Model[i].ShipmentRouteId</td>
+                            <td class="col-lg-2">@Model[i].ShipmentRouteName</td>
+
+                            <td class="col-lg-2">@(Model[i].SenderCountryName + " | " + Model[i].SenderCityName)</td>
+
+                            <td class="col-lg-2">@(Model[i].DestinationCountryName + " | " + Model[i].DestinationCityName)</td>
+
+                            <td class="col-lg-2">@(Model[i].RouteDetails.Count.ToString())</td>
+
+                            <td class="col-lg-2">
+                                <input type="button" onclick="EditShipmentRoute('@Model[i].ShipmentRouteId')" value="Edit" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

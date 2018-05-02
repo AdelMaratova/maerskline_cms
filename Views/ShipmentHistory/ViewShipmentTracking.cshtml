@@ -1,0 +1,58 @@
+﻿@model ContainerManagementSystem.Models.Shipment.ShipmentViewModel
+@using System.Collections
+@using ContainerManagementSystem.CommonEnum;
+
+<script>
+    $(document).ready(function ()
+    {
+        UpdateCurrentPageDisplayInfo('Shipment Tracking');
+
+        $('#btnTrack').on('click', function () {
+            TrackItem();
+        });
+    });
+
+    function TrackItem()
+    {
+        var item_no = $('#ShipmentNo').val();
+
+        $.ajax({
+            url: '/ShipmentHistory/CheckShipmentExistance',
+            data: {shipment_no: item_no},
+            success: function(data)
+            {
+                debugger
+                if(data.StrReturnStatus == '@ContainerManagementSystem.CommonEnum.AjaxReturnStatus.Success.ToString()')
+                {
+                    $.ajax({
+                        url: '/ShipmentHistory/GetTrackingDetails',
+                        data: { shipment_no: item_no },
+                        success: function (data) {
+                            $('#TrackingDetails').html(data);
+                        }
+                    });
+                }
+                else
+                {
+                    GenerateMessage('No shipments found');
+                }
+            }
+        });
+    }
+</script>
+
+<div id="ShipmentTrackingPage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-6 m-t-s">
+            <input id="ShipmentNo" type="text" placeholder="Please enter shipment no." />
+        </div>
+
+        <div class="col-lg-2 content-left">
+            <input type="button" value="Veiw Tracking" id="btnTrack" />
+        </div>
+    </div>
+
+    <div id="TrackingDetails">
+
+    </div>
+</div>

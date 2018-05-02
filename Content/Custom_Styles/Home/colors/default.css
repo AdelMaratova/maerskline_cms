@@ -1,0 +1,102 @@
+.section-title h2 span,
+.boxed-btn,
+.preloader,
+#header-top,
+.cart-icon .cart-icon-wrapper i,
+.mean-container a.meanmenu-reveal,
+#search,
+.service-box .devider,
+.features-box h3:before,
+.sorting-btn li a.active:before,
+.sorting-btn li a:before,
+.project figure:after,
+.panel:hover .panel-heading,
+.gallery-items div.single-item a div i,
+.purchase-btn,
+.single-pricing .boxed-btn:before,
+.single-pricing.popular-plan .boxed-btn,
+.popular-text,
+.testimonial-carousel .owl-dot.active,
+.team-member:after,
+.team-member .inner-text:after,
+#fun-fact .single-box.light-bg,
+#latest-news .post-thumbnail:after,
+#latest-news .blog-post:hover .boxed-btn:before,
+.section-before-border:before,
+.what-we-do .devider,
+.progress .progress-bar,
+.page-link:hover,
+.page-item.next .page-link,
+.page-item.prev .page-link,
+#exclusive .owl-dots div.active,
+.blog-post figure:after,
+.post-new-comment .boxed-btn,
+.subscribe-wrapper button,
+.scrollup.boxed-btn,
+button.subscribe-btn,
+.widget-search button,
+ul.tags li a:hover,
+.search-icon i  {
+    background: #ff5d00;    
+}
+
+
+.widget-enter-mail {
+    background: #ff5d00 !important;
+}
+
+
+.main-menu li.active a:before,
+.main-menu li a:hover::before, 
+.main-menu li a:focus::before,
+.cart-remove.deft-remove-icon a,
+.header-slider h1 span,
+.contact-wrapper i,
+.purchase-btn i,
+.single-pricing ul li:before,
+.popular-plan h2,
+.popular-plan .pricing,
+.single-testimonial i,
+.team-member .inner-text p,
+.blog-post:hover .post-title a,
+.copyright-text a,
+.copyright a,
+.payment-method a i:hover,
+#breadcrumb-area ul li a,
+.portfolio-post:hover .post-content .post-title a,
+.single-exclusive:hover h3,
+.blog-post:hover .post-title a,
+.masonary-meta-info li a:hover,
+.comment-reply,
+#contact-info .single-box i,
+.coming-soon-wrapper h1 span,
+.count-area ul li,
+.widget_links ul li:hover:before,
+.widget_links ul li a:hover,
+li.latest-news:hover h5,
+.widget-categories ul li a:hover,
+.recent-post:hover h6,
+.days li .active {
+    color: #ff5d00 !important;
+}
+
+.testimonial-carousel .owl-dot.active,
+.single-partner:hover,
+.page-link:hover,
+.page-item.next .page-link,
+.page-item.prev .page-link,
+#exclusive .owl-dots div.active,
+.days li .active {
+    border-color: #ff5d00;
+}
+
+.header-slider .owl-dot.active {
+    border-color: #ff5d00 !important;    
+}
+
+
+
+/* Dark Color for fun fact */
+#fun-fact .single-box.dark-bg {
+    background: #da4f00;
+}

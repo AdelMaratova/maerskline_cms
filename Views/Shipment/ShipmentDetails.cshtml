@@ -1,0 +1,334 @@
+﻿@model ContainerManagementSystem.Models.Shipment.ShipmentViewModel
+@using System.Collections
+@using ContainerManagementSystem.CommonEnum
+
+@{
+    string CreateUpdateFieldDisplay = Model.ShipmentId == Guid.Empty ? "style=display:none;" : "";
+    string CreateUpdateFieldDisable = Model.ShipmentId == Guid.Empty ? "" : "disabled='disabled'";
+    }
+
+<script>
+    $(document).ready(function () {
+        $('#SenderCountryId').on('change', function (e) {
+            CountryChange(e, 'SenderCountryId', 'SenderCityId');
+        });
+
+        $('#DestinationCountryId').on('change', function (e) {
+            CountryChange(e, 'DestinationCountryId', 'DestinationCityId');
+        });
+
+        $('#ShipmentRouteId').on('select', function (e) {
+            UpdateRouteSchedule();
+        });
+
+        $('#SenderCityId').on('change', function (e) {
+            UpdateRouteList();
+        });
+
+        $('#DestinationCityId').on('change', function (e) {
+            UpdateRouteList();
+        });
+
+        $('#ShippingMethod').on('change', function (e) {
+            UpdateRouteSchedule();
+        });
+
+        $('#btnSave').on('click', function () {
+            SaveShipment();
+        });
+
+        $('#btnBack').on('click', function () {
+            GoTOListing();
+        });
+
+        SetValues()
+    });
+
+    DepartureDate = DateTime.Now.ToString("dd MMM yyyy - hh:mm"), ArrivalDate = DateTime.Now.AddDays(additional_days).ToString("dd MMM yyyy - hh:mm"), TotalTravelDays = additional_days
+
+    function UpdateRouteSchedule()
+    {
+        var method_id = $('#ShippingMethod').val();
+        var route_id = $('#ShipmentRouteId').val();
+
+
+        if (method_id != undefined && method_id != '')
+        {
+            $.ajax({
+                url: '/Shipment/GetRouteScheduleString',
+                data: {route_id: route_id,method_id: method_id},
+                success: function(data)
+                {
+                    var countries = data.VisitedCountries;
+                    var cities = data.VisitedCities;
+                    var dates = data.VisitedDates;
+                    var departure_date = data.DepartureDate;
+                    var arrival_date = data.ArrivalDate;
+                    var total_travel_days = data.TotalTravelDays;
+
+                    $('#DepartureDateTime').html('Departure Date and Time: ' + departure_date);
+                    $('#ArrivalDateTime').html('Arrival Date and Time: ' + arrival_date);
+                    $('#TotalTravelDays').html('Total travel days: ' + total_travel_days);
+
+                    $("#RouteScheduleTable tbody").html('');
+
+                    for(i = 0;i<countries.length;i++)
+                    {
+                        var tRow = '<tr>'
+
+                        tRow += '<td>'
+                        tRow += countries[i];
+                        tRow += '</td>'
+
+                        tRow += '<td>'
+                        tRow += cities[i];
+                        tRow += '</td>'
+
+                        tRow += '<td>'
+                        tRow += dates[i];
+                        tRow += '</td>'
+
+                        tRow += '</tr>'
+
+                        $("#RouteScheduleTable tbody").append(tRow);
+                    }
+                }
+            });
+        }
+    }
+
+    function SetValues()
+    {
+        $('#ShippingMethod').find('option[value="@Model.ShippingMethod"]').attr('selected', 'selected');
+
+        //$('#SenderCountryId').trigger('change');
+
+        CountryChange('', 'SenderCountryId', 'SenderCityId', '@Model.SenderCityId');
+        CountryChange('', 'DestinationCountryId', 'DestinationCityId', '@Model.DestinationCityId');
+
+        @*$('#SenderCityId').val('@Model.SenderCityId');
+        $('#DestinationCityId').val('@Model.DestinationCityId');*@
+
+        UpdateRouteList();
+
+        if('@Model.ShipmentId' != '@Guid.Empty')
+        {
+            $('#SenderCountryId').attr('disabled', 'disabled');
+            $('#SenderCityId').attr('disabled', 'disabled');
+            $('#DestinationCountryId').attr('disabled', 'disabled');
+            $('#DestinationCityId').attr('disabled', 'disabled');
+            $('#ShipmentRouteId').attr('disabled', 'disabled');
+        }
+    }
+
+    function GoTOListing()
+    {
+        $.ajax({
+            url: '/Shipment/ShipmentList',
+            success: function(data)
+            {
+                $('#divBody').html(data);
+            }
+        });
+    }
+
+    function RefreshPage()
+    {
+        $.ajax({
+            url: '/Shipment/ShipmentDetails',
+            data: { shipment_id: '@Model.ShipmentId' },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function SaveShipment()
+    {
+        var shipment = {};
+
+        shipment.ShipmentId = '@Model.ShipmentId'
+        shipment.ShipmentNo = $('#ShipmentNo').val();
+        shipment.ShipmentStatus = $('#ShipmentStatus').val();
+        shipment.ShipmentCurrentCityId = $('#ShipmentCurrentCityId').val();
+        shipment.ShippingMethod = $('#ShippingMethod').val();
+        shipment.SenderCountryId = $('#SenderCountryId').val();
+        shipment.SenderCityId = $('#SenderCityId').val();
+        shipment.DestinationCountryId = $('#DestinationCountryId').val();
+        shipment.DestinationCityId = $('#DestinationCityId').val();
+        shipment.ShipmentRouteId = $('#ShipmentRouteId').val();
+        shipment.ShipmentRouteIndex = $('#ShipmentRouteIndex').val();
+        shipment.CustomerId = $('#CustomerId').val();
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            url: '/Shipment/ShipmentCreateUpdate',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({ shipment: shipment}),
+            success: function (data) {
+
+                if (data.StrReturnStatus == '@AjaxReturnStatus.Success') {
+                    GenerateMessage('Save Successfully');
+
+                    GoTOListing();
+                }
+                else {
+                    var messages = ''
+                    GenerateMessage('Error', data.ErrorMessages);
+
+                }
+            }
+        });
+    }
+
+    function UpdateRouteList()
+    {
+        var sender_country_id = $('#SenderCountryId').val();
+        var sender_city_id = $('#SenderCityId').val();
+        var destination_country_id = $('#DestinationCountryId').val();
+        var destination_city_id = $('#DestinationCityId').val();
+
+        $.ajax({
+            url: '/Shipment/GetRoutesByCountryCity',
+            data: {sender_country_id: sender_country_id,
+                sender_city_id: sender_city_id,
+                destination_country_id: destination_country_id,
+                destination_city_id: destination_city_id
+            },
+            success: function(data)
+            {
+                $('#ShipmentRouteId').html(data);
+                UpdateRouteSchedule();
+            }
+        });
+    }
+
+    function CountryChange(e, county_control_id, city_control_id, default_city)
+    {
+        var country_id = $('#' + county_control_id).val();
+
+        $.ajax({
+            url: '/Shipment/GetCityOptionsByCounmtryId',
+            data: { country_id: country_id },
+            success: function (data)
+            {
+                $('#' + city_control_id).html(data);
+
+                if (default_city != undefined && default_city != '')
+                {
+                    $('#' + city_control_id).val(default_city);
+                }
+
+                UpdateRouteList();
+            }
+        });
+    }
+</script>
+
+<div id="ShipmentDetailPage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="col-lg-4" @CreateUpdateFieldDisplay>
+                <label for="ShipmentNo">Shipment No</label>
+                <input id="ShipmentNo" type="text" disabled="disabled" value="@Model.ShipmentNo" />
+            </div>
+
+            <div class="col-lg-4">
+                <label for="CustomerId">Customer</label>
+                @Html.DropDownListFor(x => x.CustomerId, new SelectList(ViewData["Customers"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-12 m-t-m" @CreateUpdateFieldDisplay></div>
+
+            
+
+            <div class="col-lg-4" @CreateUpdateFieldDisplay>
+                <label for="ShipmentStatus">Status</label>
+                <input id="ShipmentStatus" type="text" disabled="disabled" value="@Model.ShipmentStatus" />
+            </div>
+
+            <div class="col-lg-4" @CreateUpdateFieldDisplay>
+                <label for="CurrentCity">Current Location</label>
+                <input id="CurrentCity" type="text" disabled="disabled" value="@Model.ShipmentCurrentCity" />
+            </div>
+
+            <div class="col-lg-12 m-t-m"></div>
+
+            <div class="col-lg-4">
+                <label for="SenderCountry">Country From</label>
+                @Html.DropDownListFor(x => x.SenderCountryId, new SelectList(ViewData["CountryList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-4">
+                <label for="SenderCountry">City From</label>
+                @Html.DropDownListFor(x => x.SenderCityId, new SelectList(ViewData["CityList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-12 m-t-m"></div>
+
+            <div class="col-lg-4">
+                <label for="DestinationCountry">Country To</label>
+                @Html.DropDownListFor(x => x.DestinationCountryId, new SelectList(ViewData["CountryList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-4">
+                <label for="DestinationCountry">City To</label>
+                @Html.DropDownListFor(x => x.DestinationCityId, new SelectList(ViewData["CityList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-12 m-t-m"></div>
+
+            <div class="col-lg-4">
+                <label for="ShipmentRoute">Route</label>
+                @Html.DropDownListFor(x => x.ShipmentRouteId, new SelectList(ViewData["RouteList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-4">
+                <label for="ShipmentMethod">Method</label>
+                @Html.DropDownListFor(x => x.ShippingMethod, new SelectList(ViewData["ShippingChannels"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-12"></div>
+
+            <div class="col-lg-12 m-t-m">
+                <label>Route Schedule</label>
+                <label id="DepartureDateTime">Departure Date and Time</label> <br />
+                <label id="ArrivalDateTime">Arrival Date and Time</label><br />
+                <label id="TotalTravelDays">Total travel days</label><br />
+
+                <table class="responstable" id="RouteScheduleTable">
+                    <thead>
+                        <tr>
+                            <th class="col-lg-2">
+                                <b>Country</b>
+                            </th>
+                            <th class="col-lg-2">
+                                <b>City</b>
+                            </th>
+                            <th class="col-lg-2">
+                                <b>Date</b>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row m-t-m">
+                <div class="col-lg-12 content-center">
+                    @{
+                        if (Model.ShipmentId == Guid.Empty)
+                        {
+                            <input type="button" value="Save" id="btnSave" />
+                        }
+                    }
+                    <input type="button" value="Back" id="btnBack" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

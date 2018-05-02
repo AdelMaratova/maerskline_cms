@@ -1,0 +1,88 @@
+﻿@model List<ContainerManagementSystem.Models.Shipment.ShipmentViewModel>
+@using System.Collections.Generic
+@using ContainerManagementSystem.CommonEnum
+
+<script>
+    $(document).ready(function () {
+        
+    });
+
+    function EditShipment(shipment_id) {
+        $.ajax({
+            url: '/ShipmentHistory/ShipmentUpdate',
+            data: { shipment_id: shipment_id },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+</script>
+
+<div id="ShipmentListPage" class="m-l-m m-r-m">
+    <div class="row">
+        <table class="responstable" id="ShipmentsTable">
+            <thead>
+                <tr>
+                    <th class="" style="display:none;">
+                        <b>ShipmentId</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Shipment No</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Sender</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Destination</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Current Location</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Status</b>
+                    </th>
+                    <th class="col-lg-2">
+                        <b>Action</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td class="" style="display:none;">ShipmentId</td>
+
+                            <td class="col-lg-2">@Model[i].ShipmentNo</td>
+
+                            <td class="col-lg-2">@(Model[i].SenderCountry + " | " + Model[i].SenderCity)</td>
+
+                            <td class="col-lg-2">@(Model[i].DestinationCountry + " | " + Model[i].DestinationCity)</td>
+
+                            <td class="col-lg-2">@(Model[i].ShipmentCurrentCity)</td>
+
+                            <td class="col-lg-2">@Model[i].ShipmentStatus</td>
+
+                            <td class="col-lg-2">
+                                @{
+                                    if (Model[i].ShipmentStatus != ShipmentStatus.Cancelled && Model[i].ShipmentStatus != ShipmentStatus.Pending)
+                                    {
+                                        <input type="button" onclick="EditShipment('@Model[i].ShipmentId')" value="Edit" />
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                 }
+ 
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

@@ -1,0 +1,177 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="keywords" content="Conceptly, Responsive, Business Template, Bootstrap 4,">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/Content/Custom_Styles/Home/favicon.png" type="image/x-icon" />
+    <title>Maersk Line</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/Content/Custom_Styles/Home/style.css">
+    <link rel="stylesheet" href="/Content/Custom_Styles/Home/responsive.css">
+
+    <script>
+        $(document).ready(function () {
+            $('#lnkLogin').on('click', function () {
+                window.location.href = '/Login/LoginPage';
+            });
+
+            $('#lnkHome').on('click', function () {
+                window.location.href = '/Home/Index';
+            });
+
+            $('#lnkTracking').on('click', function () {
+                window.location.href = '/ShipmentHistory/ViewShipmentTracking';
+            });
+
+            $('#lnkAbout').on('click', function () {
+                window.location.href = '/Home/About';
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <section class="navbar-wrapper">
+        <div class="navbar-area sticky-nav">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2 col-6">
+                        <div class="logo main">
+                            <a href="index.html"><img class="responsive" src="/Content/Images/Home/Logo_Horizontal.png" alt="Startkit"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-10 d-none d-lg-block text-right">
+                        <nav class="main-menu">
+                            <ul>
+                                <li class="active">
+                                    <a id="lnkHome" href="#">Home</a>
+                                </li>
+                                <li>
+                                    <a id="lnkAbout" href="#">About Us</a>
+                                </li>
+                                <li>
+                                    <a id="lnkTracking" href="#">Track Shipment</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="lnkLogin">Login</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        @*<ul class="header-right-bar d-lg-inline-block d-none">
+                            <li>
+                                <a class="quote-btn boxed-btn" id="lnkLogin" href="#">Login</a>
+                            </li>
+                        </ul>*@
+                    </div>
+                </div>
+            </div>
+            <!-- Start Mobile Menu -->
+            <div class="mobile-menu-area d-lg-none">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mobile-menu">
+                                <nav class="mobile-menu-active">
+                                    <ul>
+                                        <li class="active">
+                                            <a id="lnkHome" href="#">Home</a>
+                                        </li>
+                                        <li>
+                                            <a id="lnkAbout" href="#">About Us</a>
+                                        </li>
+                                        <li>
+                                            <a id="lnkTracking" href="#">Track Shipment</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" id="lnkLogin">Login</a>
+                                        </li>
+
+                                    </ul>
+                                </nav>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <header>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="header-slider">
+                    <div class="header-single-slider">
+                        <figure>
+                            <img src="/Content/Images/Home/maersk_1.jpg" alt="">
+                            <figcaption>
+                                <div class="content">
+                                    <div class="container inner-content text-left">
+                                        <h1>We Move More Than<br><span>Cargo</span></h1>
+                                    </div>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="header-single-slider">
+                        <figure>
+                            <img src="/Content/Images/Home/maersk_2.jpg" alt="">
+                            <figcaption>
+                                <div class="content">
+                                    <div class="container inner-content text-center">
+                                        <h1>We Move More Than<br><span>Cargo</span></h1>
+                                    </div>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="header-single-slider">
+                        <figure>
+                            <img src="/Content/Images/Home/maersk_3.jpg" alt="">
+                            <figcaption>
+                                <div class="content">
+                                    <div class="container inner-content text-right">
+                                        <h1>We Move More Than<br><span>Cargo</span></h1>
+                                    </div>
+                                </div>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <script src="/Scripts/Home/jquery-3.2.1.min.js"></script>
+    <script src="/Scripts/Home/popper.min.js"></script>
+    <script src="/Scripts/Home/bootstrap.min.js"></script>
+    <script src="/Scripts/Home/jquery.sticky.js"></script>
+    <script src="/Scripts/Home/owl.carousel.min.js"></script>
+    <script src="/Scripts/Home/jquery.shuffle.min.js"></script>
+    <script src="/Scripts/Home/jquery.counterup.min.js"></script>
+    <script src="/Scripts/Home/wow.min.js"></script>
+    <script src="/Scripts/Home/jquery.meanmenu.min.js"></script>
+    <script src="/Scripts/Home/jquery.magnific-popup.min.js"></script>
+    <script src="/Scripts/Home/jquery.hoverdir.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/ScrollToPlugin.min.js"></script>
+
+    <script src="/Scripts/Home/custom.js"></script>
+
+</body>
+
+</html>

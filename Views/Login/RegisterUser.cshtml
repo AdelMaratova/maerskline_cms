@@ -1,0 +1,119 @@
+﻿@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/Content/Custom_Styles/styles_custom_input.css">
+<link rel="stylesheet" href="~/Content/Custom_Styles/styles_custom_1.css">
+
+<script>
+
+    $(document).ready(function () {
+        
+        $('#btnCancel').on('click', function () {
+            GoToLoginPage();
+        });
+
+        $('#btnRegister').on('click', function () {
+            CreateUserLocal();
+            setTimeout(function () { GoToLoginPage() }, 2000);
+        });
+    });
+
+    
+
+    function CreateUserLocal()
+    {
+        var user = {};
+
+        user.UserId = '@Guid.Empty';
+        user.FirstName = $('#FirstName').val();
+        user.LastName = $('#LastName').val();
+        user.Email = $('#Email').val();
+        user.Password = $('#Password').val();
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            dataType: 'json',
+            url: '/User/UserCreateUpdate',
+            data: JSON.stringify({ user: user }),
+            success: function (data) {
+
+                GenerateMessage('Saved Successfully.')
+
+                GoToLoginPage()
+
+            },
+            error: function (data) { }
+        });
+    }
+
+    function GoToLoginPage()
+    {
+        window.location.href = '/Login/LoginPage';
+    }
+</script>
+
+<div class="container">
+    <div class="login">
+
+        <h1 class="login-heading1">
+            <strong>Container Management System</strong>
+        </h1>
+
+        <h4 class="login-heading3">
+            Register User.
+        </h4>
+
+        <div style="margin-top: 20px;">
+            <div class="row">
+
+                <h4 class="login-heading4">
+                    First Name
+                </h4>
+
+                <input id="FirstName" type="text" name="FirstName" placeholder="First Name" required="required" class="input-txt" />
+
+                <div class="col-lg-12 m-t-s"></div>
+
+                <h4 class="login-heading4">
+                    Last Name
+                </h4>
+
+                <input id="LastName" type="text" name="LastName" placeholder="Last Name" required="required" class="input-txt" />
+
+                <div class="col-lg-12 m-t-s"></div>
+
+                <h4 class="login-heading4">
+                    Email
+                </h4>
+
+                <input id="Email" type="text" name="Email" placeholder="Email" required="required" class="input-txt" />
+
+                <div class="col-lg-12 m-t-s"></div>
+
+                <h4 class="login-heading4">
+                    Password
+                </h4>
+
+                <input id="Password" type="password" name="Password" placeholder="Password" required="required" class="input-txt" />
+
+                <div class="col-lg-12 m-t-s"></div>
+            </div>
+        </div>
+    </div>
+    <div class="login-footer">
+
+        <div class="col-lg-2"></div>
+        <div class="col-lg-4 content-center">
+            <button id="btnCancel" type="button" class="btn btn--right" tabindex="1">Cancel</button>
+        </div>
+
+        <div class="col-lg-2"></div>
+
+        <div class="col-lg-4">
+            <button id="btnRegister" type="button" class="btn btn--left" tabindex="2">Register</button>
+        </div>
+
+    </div>
+</div>

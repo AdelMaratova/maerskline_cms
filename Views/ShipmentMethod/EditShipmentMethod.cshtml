@@ -1,0 +1,128 @@
+﻿@model ContainerManagementSystem.Models.ShippingChannel.ShippingChannel
+@using ContainerManagementSystem.Models.System;
+@using ContainerManagementSystem.CommonEnum;
+
+<script>
+    $(document).ready(function () {
+        $('#btnCancel').on('click', function () { RefreshPage('@Model.ShippingChannelId') });
+
+        $('#btnSave').on('click', function () { SaveShippingChannge() });
+
+        $('#btnBack').on('click', function () { BackToListing() });
+
+        $('#btnDelete').on('click', function () { DeleteShippingMethod() });
+
+        SetValues()
+    });
+
+    function SetValues()
+    {
+        $('#ShippingMethod').find('option[value="@Model.ShippingMethod"]').attr('selected', 'selected')
+    }
+
+    function BackToListing() {
+        $.ajax({
+            url: '/ShipmentMethod/ShipmentMethodList',
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function SaveShippingChannge() {
+        var shipping_channel = {};
+
+        shipping_channel.ShippingChannelId = '@Model.ShippingChannelId';
+        shipping_channel.ShippingMethod = $('#ShippingMethod').val();
+        shipping_channel.ShippingChannelName = $('#ShippingChannelName').val();
+        shipping_channel.ShippingChannelsCapacity = $('#ShippingChannelsCapacity').val();
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            type: 'POST',
+            dataType: 'json',
+            url: '/ShipmentMethod/ShippingMethodCreateUpdate',
+            data: JSON.stringify({ shipping_channel: shipping_channel }),
+            success: function (data) {
+
+                GenerateMessage('Saved Successfully.')
+
+                RefreshPage(data.ItemId);
+
+            },
+            error: function (data) { }
+        });
+    }
+
+    function RefreshPage(id)
+    {
+        $.ajax({
+            url: '/ShipmentMethod/EditShipmentMethod',
+            data: { shipping_channel_id: id },
+            success: function (data) {
+                $('#divBody').html(data);
+            },
+            error: function (data) { }
+        });
+    }
+
+    function DeleteShippingMethod()
+    {
+        var confirmation = confirm('Are you sure you want to delete profile? This action cannot be undone.');
+
+        if(confirmation)
+        {
+            $.ajax({
+                url: '/ShipmentMethod/ShippingMethodDelete',
+                data: { shipping_channel_id: '@Model.ShippingChannelId' },
+                success: function (data) {
+                    if (data.StrReturnStatus == '@AjaxReturnStatus.Success')
+                    {
+                        GenerateMessage('Deleted Successfully');
+                        GoToListing();
+                    }
+                    else {
+                        var messages = ''
+                        debugger;
+                        GenerateMessage('Error', data.ErrorMessages);
+
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+
+<div id="MyProfilePage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="col-lg-4">
+                <label for="ShippingChannelName">Shipping Method Name</label>
+                <input id="ShippingChannelName" type="text" value="@Model.ShippingChannelName" />
+            </div>
+
+            <div class="col-lg-4">
+                <label for="ShippingChannelsCapacity">Capacity</label>
+                <input id="ShippingChannelsCapacity" type="number" value="@Model.ShippingChannelsCapacity" />
+            </div>
+
+            <div class="col-lg-4">
+                <label for="ShippingMethod">Email </label>
+                @Html.DropDownListFor(x => x.ShippingMethod, new SelectList(ViewData["ShippingMethod"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-t-m">
+        <div class="col-lg-12 content-center">
+            <input type="button" value="Delete" id="btnDelete" />
+            <input type="button" value="Save" id="btnSave" />
+            <input type="button" value="Cancel" id="btnCancel" />
+            <input type="button" value="Back" id="btnBack" />
+        </div>
+    </div>
+
+</div>

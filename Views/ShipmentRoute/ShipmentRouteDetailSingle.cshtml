@@ -1,0 +1,13 @@
+﻿@model ContainerManagementSystem.Models.ShipmentRoute.ShipmentRouteDetailViewModel
+
+<tr id="row_@Model.ShipmentRouteDetailIndex">
+    <td class="col-lg-2" style="display:none;" id="ShipmentRouteDetailId_@Model.ShipmentRouteDetailIndex">@Model.ShipmentRouteDetailId</td>
+
+    <td class="col-lg-2" id="ShipmentRouteDetailIndex_@Model.ShipmentRouteDetailIndex">@Model.ShipmentRouteDetailIndex</td>
+
+    <td class="col-lg-2"><input type="number" value="@Model.ShipmentouteDetailDayDuration" id="ShipmentouteDetailDayDuration_@Model.ShipmentRouteDetailIndex" /></td>
+
+    <td class="col-lg-2"> @Html.DropDownListFor(x => x.CountryId, new SelectList(ViewData["CountryList"] as List<SelectListItem>, "Value", "Text"), new { @id = "CountryId_" + Model.ShipmentRouteDetailIndex.ToString() }) </td>
+
+    <td class="col-lg-2"> @Html.DropDownListFor(x => x.CityId, new SelectList(ViewData["CityList"] as List<SelectListItem>, "Value", "Text"), new { @id = "CityId_" + Model.ShipmentRouteDetailIndex.ToString() }) </td>
+</tr>

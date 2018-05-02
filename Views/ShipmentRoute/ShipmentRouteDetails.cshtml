@@ -1,0 +1,240 @@
+﻿@model ContainerManagementSystem.Models.ShipmentRoute.ShipmentRouteViewModel
+@using ContainerManagementSystem.CommonEnum
+
+@{
+    string CreateUpdateFieldDisplay = Model.ShipmentRouteId == Guid.Empty ? "style=display:none;" : "";
+    string CreateUpdateFieldDisable = Model.ShipmentRouteId == Guid.Empty ? "" : "disabled='disabled'";
+}
+
+<script>
+    $(document).ready(function () {
+        $('#SenderCountryId').on('change', function (e) {
+            CountryChange(e, 'SenderCountryId', 'SenderCityId');
+        });
+
+        $('#DestinationCountryId').on('change', function (e) {
+            CountryChange(e, 'DestinationCountryId', 'DestinationCityId');
+        });
+
+        $('#btnSave').on('click', function () {
+            SaveShipmentRoute();
+        });
+
+        $('#btnBack').on('click', function () {
+            GoToListing();
+        });
+
+        $('#btnAddNewShipmentRouteDetail').on('click', function () {
+            AddNewRouteDetail();
+        });
+
+        SetValues();
+    });
+
+    function AddNewRouteDetail()
+    {
+        var last_index = $("#ShipmentRouteDetailsTable tr:last")[0].id.split('_')[1] == undefined ? -1 : $("#ShipmentRouteDetailsTable tr:last")[0].id.split('_')[1];
+
+        $.ajax({
+            url: '/ShipmentROute/ShipmentRouteDetailSingle',
+            data: { route_detail_id: '@Guid.Empty', index: (parseInt(last_index) + 1) },
+            success: function(data)
+            {
+                $("#ShipmentRouteDetailsTable tbody").append(data);
+            }
+        });
+    }
+
+    function SetValues()
+    {
+        CountryChange('', 'SenderCountryId', 'SenderCityId', '@Model.SenderCityId');
+        CountryChange('', 'DestinationCountryId', 'DestinationCityId', '@Model.DestinationCityId');
+
+
+        if('@Model.ShipmentRouteId' != '@Guid.Empty')
+        {
+            $('#SenderCountryId').attr('disabled', 'disabled');
+            $('#SenderCityId').attr('disabled', 'disabled');
+            $('#DestinationCountryId').attr('disabled', 'disabled');
+            $('#DestinationCityId').attr('disabled', 'disabled');
+            $('#ShipmentRouteId').attr('disabled', 'disabled');
+        }
+    }
+
+    function GoToListing()
+    {
+        $.ajax({
+            url: '/ShipmentRoute/ShipmentRouteList',
+            success: function(data)
+            {
+                $('#divBody').html(data);
+            }
+        });
+    }
+
+    function RefreshPage()
+    {
+        function EditShipment(shipment_id) {
+            $.ajax({
+                url: '/ShipmentRoute/ShipmentRouteDetails',
+                data: { shipment_id: '@Model.ShipmentRouteId' },
+                success: function (data) {
+                    $('#divBody').html(data);
+                },
+                error: function (data) { }
+            });
+        }
+    }
+
+    function SaveShipmentRoute()
+    {
+        var shipment_route = {};
+        shipment_route.RouteDetails = [];
+        var shipment_route_detail_single = {};
+
+        shipment_route.ShipmentRouteId = '@Model.ShipmentRouteId';
+        shipment_route.ShipmentRouteName = $('#ShipmentRouteName').val();
+        shipment_route.SenderCountryId = $('#SenderCountryId').val();
+        shipment_route.SenderCityId = $('#SenderCityId').val();
+        shipment_route.DestinationCountryId = $('#DestinationCountryId').val();
+        shipment_route.DestinationCityId = $('#DestinationCityId').val();
+
+        for (i = 1; i < $("#ShipmentRouteDetailsTable tr").length; i++)
+        {
+            shipment_route_detail_single = {};
+
+            shipment_route_detail_single.ShipmentRouteDetailId = $('#ShipmentRouteDetailId_' + (i - 1)).html();
+            shipment_route_detail_single.ShipmentRouteDetailIndex = $('#ShipmentRouteDetailIndex_' + (i - 1)).html();
+            shipment_route_detail_single.ShipmentRouteId = '@Model.ShipmentRouteId'
+            shipment_route_detail_single.ShipmentouteDetailDayDuration = $('#ShipmentouteDetailDayDuration_' + (i - 1)).val();
+            shipment_route_detail_single.CountryId = $('#CountryId_' + (i - 1)).val();
+            shipment_route_detail_single.CityId = $('#CityId_' + (i - 1)).val();
+
+            shipment_route.RouteDetails.push(shipment_route_detail_single);
+        }
+        
+
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            url: '/ShipmentRoute/ShipmentRouteCreateUpdate',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({ viewModel: shipment_route }),
+            success: function (data) {
+                if (data.StrReturnStatus == '@AjaxReturnStatus.Success') {
+                    GenerateMessage('Save Successfully');
+                    GoToListing();
+                }
+                else {
+                    var messages = ''
+
+                    GenerateMessage('Error', data.ErrorMessages);
+
+                }
+            }
+        });
+    }
+
+    function CountryChange(e, county_control_id, city_control_id, default_city)
+    {
+        var country_id = $('#' + county_control_id).val();
+
+        $.ajax({
+            url: '/ShipmentRoute/GetCityOptionsByCounmtryId',
+            data: { country_id: country_id },
+            success: function (data)
+            {
+                $('#' + city_control_id).html(data);
+
+                if (default_city != undefined && default_city != '')
+                {
+                    $('#' + city_control_id).val(default_city);
+                }
+            }
+        });
+    }
+</script>
+
+<div id="ShipmentRouteDetailsPage" class="m-l-m m-r-m">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="col-lg-4" @CreateUpdateFieldDisable>
+                <label for="ShipmentNo">Shipment Route Name</label>
+                <input id="ShipmentRouteName" type="text" value="@Model.ShipmentRouteName" />
+            </div>
+
+            <div class="col-lg-12 m-t-m"></div>
+
+            <div class="col-lg-4">
+                <label for="SenderCountry">Country From</label>
+                @Html.DropDownListFor(x => x.SenderCountryId, new SelectList(ViewData["CountryList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-4">
+                <label for="SenderCountry">City From</label>
+                @Html.DropDownListFor(x => x.SenderCityId, new SelectList(ViewData["CityList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-12 m-t-m"></div>
+
+            <div class="col-lg-4">
+                <label for="DestinationCountry">Country To</label>
+                @Html.DropDownListFor(x => x.DestinationCountryId, new SelectList(ViewData["CountryList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+
+            <div class="col-lg-4">
+                <label for="DestinationCountry">City To</label>
+                @Html.DropDownListFor(x => x.DestinationCityId, new SelectList(ViewData["CityList"] as List<SelectListItem>, "Value", "Text"))
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 content-right">
+            <input type="button" id="btnAddNewShipmentRouteDetail" value="Add New" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="responstable" id="ShipmentRouteDetailsTable">
+                <thead>
+                    <tr>
+                        <th class="" style="display:none;">
+                            <b>ShipmentRouteDetailsId</b>
+                        </th>
+                        <th class="col-lg-2">
+                            <b>Route Index</b>
+                        </th>
+                        <th class="col-lg-2">
+                            <b>Duration</b>
+                        </th>
+                        <th class="col-lg-2">
+                            <b>Country</b>
+                        </th>
+                        <th class="col-lg-2">
+                            <b>City</b>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        for (int i = 0; i < Model.RouteDetails.Count; i++)
+                        {
+                            @Html.Action("ShipmentRouteDetailSingle", "ShipmentRoute", new { route_detail_id = Model.RouteDetails[i].ShipmentRouteDetailId, index = Model.RouteDetails[i].ShipmentRouteDetailIndex })
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row m-t-m">
+        <div class="col-lg-12 content-center">
+            <input type="button" value="Save" id="btnSave" />
+            <input type="button" value="Back" id="btnBack" />
+        </div>
+    </div>
+
+</div>
